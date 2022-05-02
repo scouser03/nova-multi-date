@@ -3,6 +3,7 @@
 namespace Scouser03\NovaMultiDate;
 
 use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class NovaMultiDate extends Field
 {
@@ -12,4 +13,5 @@ class NovaMultiDate extends Field
      * @var string
      */
     public $component = 'nova-multi-date';
+
 }

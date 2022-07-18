@@ -65,7 +65,9 @@ export default {
         },
     },
 
-    data: () => ({ flatpickr: null }),
+    data: () => ({
+        flatpickr: null,
+    }),
 
     watch: {
         value: function(newValue, oldValue) {
@@ -75,7 +77,7 @@ export default {
         },
     },
 
-    mounted() {
+    created() {
         this.$nextTick(() => this.createFlatpickr())
     },
 

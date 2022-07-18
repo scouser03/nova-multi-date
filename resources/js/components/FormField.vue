@@ -6,38 +6,45 @@
     >
         <template slot="field">
             <div class="flex flex-col">
-                <div
-                    v-for="(date, index) in multi_date"
-                    class="flex items-center mt-2"
-                >
-                    <div class="flex items-center">
-                        <label class="bg-white mx-2 text-80 rounded-lg"
-                            >From:</label
-                        >
-                        <date-time-picker
-                            :placeholder="date.from_date"
-                            class="from-control w-full"
-                            :value="date.from_date"
-                            :index="index"
-                            name="from_date"
-                            @change="setDate"
-                        >
-                        </date-time-picker>
+                <div v-for="(date, index) in multi_date">
+                    <div class="flex items-center mt-2">
+                        <div class="flex items-center">
+                            <label class="bg-white mx-2 text-80 rounded-lg"
+                                >From:</label
+                            >
+                            <date-time-picker
+                                :placeholder="date.from_date"
+                                class="from-control w-full"
+                                :value="date.from_date"
+                                :index="index"
+                                name="from_date"
+                                @change="setDate"
+                            >
+                            </date-time-picker>
+                        </div>
+                        <div class="flex items-center">
+                            <label class="bg-white mx-2 text-80 rounded-lg"
+                                >to:</label
+                            >
+                            <date-time-picker
+                                class="ml-1 from-control w-full"
+                                :placeholder="date.to_date"
+                                :value="date.to_date"
+                                :index="index"
+                                name="to_date"
+                                @change="setDate"
+                            >
+                            </date-time-picker>
+                        </div>
                     </div>
-                    <div class="flex items-center">
-                        <label class="bg-white mx-2 text-80 rounded-lg"
-                            >to:</label
-                        >
-                        <date-time-picker
-                            class="ml-1 from-control w-full"
-                            :placeholder="date.to_date"
-                            :value="date.to_date"
-                            :index="index"
-                            name="to_date"
-                            @change="setDate"
-                        >
-                        </date-time-picker>
-                    </div>
+                    <span
+                        v-show="customErrors[index]"
+                        class="help-text error-text mt-2 text-danger"
+                    >
+                        The from date must be less than the to date, if you want
+                        to save it, change it! Otherwise it will skip
+                        automatically!
+                    </span>
                 </div>
                 <button
                     @click="addDateRow"
@@ -67,6 +74,7 @@ export default {
     data() {
         return {
             multi_date: [],
+            customErrors: [],
         }
     },
 
@@ -92,6 +100,16 @@ export default {
             )
 
             newDates[e.name] = e.value
+
+            if (e.name == 'to_date') {
+                if (newDates['from_date'] > newDates['to_date']) {
+                    this.customErrors[e.index] = e.index.toString()
+                } else {
+                    this.customErrors = this.customErrors.filter(
+                        item => item !== e.index.toString()
+                    )
+                }
+            }
         },
 
         /**
@@ -100,7 +118,10 @@ export default {
         fill(formData) {
             var formatData = this.multi_date
             var formatData = this.multi_date.filter(date => {
-                return date.from_date != '-' || date.to_date != '-'
+                return (
+                    (date.from_date != '-' || date.to_date != '-') &&
+                    date.from_date < date.to_date
+                )
             })
 
             formatData = JSON.stringify(formatData)
